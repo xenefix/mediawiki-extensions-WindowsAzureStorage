@@ -12,7 +12,7 @@ $wgExtensionCredits['other'][] = array(
 	'name'           => 'WindowsAzureStorage',
 	'author'         => array( '[http://www.hallowelt.biz Hallo Welt! Medienwerkstatt GmbH]', 'Markus Glaser', 'Robert Vogel' ),
 	'url'            => 'https://www.mediawiki.org/wiki/Extension:WindowsAzureStorage',
-	'version'        => '1.1.0',
+	'version'        => '1.1.1',
 	'descriptionmsg' => 'windowsazurestorage-desc',
 );
 

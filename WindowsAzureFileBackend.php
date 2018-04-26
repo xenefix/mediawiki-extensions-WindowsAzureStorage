@@ -25,12 +25,12 @@
  * @author Thai Phan
  */
 
-use WindowsAzure\Blob\Models\ContainerACL;
-use WindowsAzure\Blob\Models\CreateBlobOptions;
-use WindowsAzure\Blob\Models\ListBlobsOptions;
-use WindowsAzure\Blob\Models\PublicAccessType;
-use WindowsAzure\Common\ServiceException;
-use WindowsAzure\Common\ServicesBuilder;
+ use MicrosoftAzure\Storage\Blob\Models\ContainerACL;
+ use MicrosoftAzure\Storage\Blob\Models\CreateBlobOptions;
+ use MicrosoftAzure\Storage\Blob\Models\ListBlobsOptions;
+ use MicrosoftAzure\Storage\Blob\Models\PublicAccessType;
+ use MicrosoftAzure\Storage\Common\ServiceException;
+ use MicrosoftAzure\Storage\Common\ServicesBuilder;
 
 /**
  * @brief Class for a Windows Azure based file backend
@@ -107,7 +107,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 		try {
 			$this->proxy->getContainerProperties( $container );
 			return true; // container exists
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 					break;
@@ -141,7 +141,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 			$options = new CreateBlobOptions();
 			$options->setMetadata( array( 'sha1base36' => $sha1Hash ) );
 			$this->proxy->createBlockBlob( $dstCont, $dstRel, (string)$params['content'], $options );
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 					$status->fatal( 'backend-fail-create', $params['dst'] );
@@ -191,7 +191,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 				$this->proxy->createBlockBlob( $dstCont, $dstRel, $fp, $options );
 				fclose( $fp );
 			}
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 					$status->fatal( 'backend-fail-store', $params['src'], $params['dst'] );
@@ -226,7 +226,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 
 		try {
 			$this->proxy->copyBlob( $dstCont, $dstRel, $srcCont, $srcRel );
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 					if ( empty( $params['ignoreMissingSource'] ) ) {
@@ -257,7 +257,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 
 		try {
 			$this->proxy->deleteBlob( $srcCont, $srcRel );
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 					if ( empty( $params['ignoreMissingSource'] ) ) {
@@ -289,7 +289,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 				// Make container public to end-users...
 				$status->merge( $this->doPublishInternal( $fullCont, $dir, $params ) );
 			}
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 				case 409: // container already exists
@@ -318,7 +318,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 			$acl = new ContainerAcl();
 			$acl->setPublicAccess( PublicAccessType::NONE );
 			$this->proxy->setContainerAcl( $fullCont, $acl );
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			$this->handleException( $e, $status, __METHOD__, $params );
 		}
 
@@ -337,7 +337,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 			$acl = new ContainerAcl();
 			$acl->setPublicAccess( PublicAccessType::BLOBS_ONLY );
 			$this->proxy->setContainerAcl( $fullCont, $acl );
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			$this->handleException( $e, $status, __METHOD__, $params );
 		}
 
@@ -367,7 +367,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 				'size'  => $size,
 				'sha1'  => $sha1
 			);
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 					$stat = false;
@@ -432,7 +432,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 			$blobs = $this->proxy->listBlobs( $fullCont, $options )->getBlobs();
 
 			return ( count( $blobs ) > 0 );
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 					return false;
@@ -536,7 +536,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 			} else {
 				$after = end( $objects ); // update last item
 			}
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 					break;
@@ -604,7 +604,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 			} else {
 				$after = end( $objects );
 			}
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 					break;
@@ -646,7 +646,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 		try {
 			$contents = $this->proxy->getBlob( $srcCont, $srcRel )->getContentStream();
 			file_put_contents( 'php://output', $contents );
-		} catch ( ServiceException $e ) {
+		} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 			switch ( $e->getCode() ) {
 				case 404:
 					$status->fatal( 'backend-fail-stream', $params['src'] );
@@ -688,7 +688,7 @@ class WindowsAzureFileBackend extends FileBackendStore {
 						$contents = $this->proxy->getBlob( $srcCont, $srcRel )->getContentStream();
 						file_put_contents( $tmpPath, $contents );
 					}
-				} catch ( ServiceException $e ) {
+				} catch ( \MicrosoftAzure\Storage\Common\Exceptions\ServiceException $e ) {
 					$tmpFile = null;
 					switch ( $e->getCode() ) {
 						case 404:
