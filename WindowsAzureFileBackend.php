@@ -760,12 +760,12 @@ abstract class AzureFileBackendList implements Iterator {
 	const PAGE_SIZE = 9000; // file listing buffer size
 
 	/**
-	 * @param $backend AzureFileBackend
+	 * @param $backend WindowsAzureFileBackend
 	 * @param $fullCont string Resolved container name
 	 * @param $dir string Resolved directory relative to container
 	 * @param $params Array
 	 */
-	public function __construct( AzureFileBackend $backend, $fullCont, $dir, array $params ) {
+	public function __construct( WindowsAzureFileBackend $backend, $fullCont, $dir, array $params ) {
 		$this->backend = $backend;
 		$this->container = $fullCont;
 		$this->dir = $dir;
